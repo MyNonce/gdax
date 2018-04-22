@@ -21,9 +21,9 @@ import (
 ~~~
 #!/bin/bash
 export gdax.url=api.gdax.com
-gdax.key=`API_KEY`
-gdax.secret=`API_SECRET`
-gdax.passphrase=`API_PASSPHRASE`
+export gdax.key=`API_KEY`
+export gdax.secret=`API_SECRET`
+export gdax.passphrase=`API_PASSPHRASE`
 ~~~
 
 
