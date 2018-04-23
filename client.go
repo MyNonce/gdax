@@ -26,6 +26,10 @@ var (
 	GDAXClient = newClient(baseURL, nil)
 )
 
+const (
+	throttleRate time.Duration = time.Second / 3
+)
+
 // Client is used to make API call the GDAX
 type Client struct {
 	BaseURL    *url.URL
@@ -103,6 +107,11 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 }
 
 func (c *Client) do(req *http.Request, result interface{}) (*http.Response, error) {
+
+	// This will have to work for now... we are getting rate limited
+	throttle := time.Tick(throttleRate)
+	<-throttle
+
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		log.Fatal("client.do:", err)
