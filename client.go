@@ -17,10 +17,10 @@ import (
 )
 
 var (
-	baseURL    = os.Getenv("gdax.url") // GDAX API Base URL (api.gdax.com)
-	publickey  = os.Getenv("gdax.key")
-	secret     = os.Getenv("gdax.secret")
-	passphrase = os.Getenv("gdax.passphrase")
+	baseURL    = os.Getenv("gdax_url") // GDAX API Base URL (api.gdax.com)
+	publickey  = os.Getenv("gdax_key")
+	secret     = os.Getenv("gdax_secret")
+	passphrase = os.Getenv("gdax_passphrase")
 
 	// GDAXClient is the GDAX API client singleton
 	GDAXClient = newClient(baseURL, nil)
