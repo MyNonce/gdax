@@ -20,10 +20,10 @@ import (
 
 ~~~
 #!/bin/bash
-export gdax.url=api.gdax.com
-export gdax.key=`API_KEY`
-export gdax.secret=`API_SECRET`
-export gdax.passphrase=`API_PASSPHRASE`
+export gdax_url=api.gdax.com
+export gdax_key=`API_KEY`
+export gdax_secret=`API_SECRET`
+export gdax_passphrase=`API_PASSPHRASE`
 ~~~
 
 

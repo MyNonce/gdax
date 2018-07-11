@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -23,7 +22,7 @@ var (
 	passphrase = os.Getenv("gdax_passphrase")
 
 	// GDAXClient is the GDAX API client singleton
-	GDAXClient = newClient(baseURL, nil)
+	GDAXClient = NewClient(baseURL, nil)
 )
 
 const (
@@ -38,10 +37,13 @@ type Client struct {
 	AccountClient *AccountClient
 	LedgerClient  *LedgerClient
 	FillsClient   *FillsClient
+	ProductClient *ProductClient
+	BookClient    *BookClient
+	OrderClient   *OrderClient
 }
 
 // NewClient create a new client to make API calls
-func newClient(host string, httpClient *http.Client) *Client {
+func NewClient(host string, httpClient *http.Client) *Client {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
@@ -56,6 +58,9 @@ func newClient(host string, httpClient *http.Client) *Client {
 	c.AccountClient = &AccountClient{client: c}
 	c.LedgerClient = &LedgerClient{client: c}
 	c.FillsClient = &FillsClient{client: c}
+	c.ProductClient = &ProductClient{client: c}
+	c.BookClient = &BookClient{client: c}
+	c.OrderClient = &OrderClient{client: c}
 	return c
 }
 
@@ -69,23 +74,19 @@ func (c *Client) Request(method, path string, body, result interface{}) (*http.R
 	return c.do(req, result)
 }
 
-func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
+func (c *Client) newRequest(method, path string, params interface{}) (*http.Request, error) {
 	u := fmt.Sprintf("%s%s", c.BaseURL.String(), path)
-	var buf io.ReadWriter
+	body := bytes.NewReader(make([]byte, 0))
 	var data []byte
 	var err error
-	if body != nil {
-		data, err = json.Marshal(body)
+	if params != nil {
+		data, err = json.Marshal(params)
 		if err != nil {
 			return nil, err
 		}
-		buf = new(bytes.Buffer)
-		err = json.NewEncoder(buf).Encode(body)
-		if err != nil {
-			return nil, err
-		}
+		body = bytes.NewReader(data)
 	}
-	req, err := http.NewRequest(method, u, buf)
+	req, err := http.NewRequest(method, u, body)
 	if err != nil {
 		return nil, err
 	}
